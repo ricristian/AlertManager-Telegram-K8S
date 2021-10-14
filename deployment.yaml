@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: telegram
+  name: telegram
+  namespace: monitoring
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: telegram
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: telegram
+    spec:
+      containers:
+        - env:
+            - name: BOT_TOKEN
+              value: botToken
+            - name: CHAT_ID
+              value: "chatId"
+          image: ghcr.io/ricristian/alertmanager-telegram-k8s:latest
+          name: telegram
+          ports:
+            - containerPort: 9119
+          resources: {}
+          securityContext:
+            runAsUser: 104
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: telegram
+  name: telegram
+  namespace: monitoring
+spec:
+  ports:
+    - name: "9119"
+      port: 9119
+      targetPort: 9119
+  selector:
+    app: telegram
