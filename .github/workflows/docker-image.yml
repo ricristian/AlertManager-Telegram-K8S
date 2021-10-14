@@ -6,7 +6,7 @@ on:
       - created
   push:
     branches:
-      - feat/Initial_stage
+      - main
 
   schedule:
     - cron: "0 0 * * *"
